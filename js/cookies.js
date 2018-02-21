@@ -1,204 +1,172 @@
 /*
-2  * Cookies.js - 1.2.4-pre
-3  * https://github.com/ScottHamper/Cookies
-4  *
-5  * This is free and unencumbered software released into the public domain.
-6  */
-7 (function (global, undefined) {
-8     'use strict';
-9
+ * Cookies.js - 1.2.4-pre
+ * https://github.com/ScottHamper/Cookies
+ *
+ * This is free and unencumbered software released into the public domain.
+ */
+(function (global, undefined) {
+    'use strict';
 
-10     var factory = function (window) {
-11         if (typeof window.document !== 'object') {
-12             throw new Error('Cookies.js requires a `window` with a `document` object');
-13         }
-14
+    var factory = function (window) {
+        if (typeof window.document !== 'object') {
+            throw new Error('Cookies.js requires a `window` with a `document` object');
+        }
 
-15         var Cookies = function (key, value, options) {
-16             return arguments.length === 1 ?
-17                 Cookies.get(key) : Cookies.set(key, value, options);
-18         };
-19
+        var Cookies = function (key, value, options) {
+            return arguments.length === 1 ?
+                Cookies.get(key) : Cookies.set(key, value, options);
+        };
 
-20         // Allows for setter injection in unit tests
-21         Cookies._document = window.document;
-22
+        // Allows for setter injection in unit tests
+        Cookies._document = window.document;
 
-23         // Used to ensure cookie keys do not collide with
-24         // built-in `Object` properties
-25         Cookies._cacheKeyPrefix = 'cookey.'; // Hurr hurr, :)
-26
-27         Cookies._maxExpireDate = new Date('Fri, 31 Dec 9999 23:59:59 UTC');
-28
+        // Used to ensure cookie keys do not collide with
+        // built-in `Object` properties
+        Cookies._cacheKeyPrefix = 'cookey.'; // Hurr hurr, :)
 
-29         Cookies.defaults = {
-30             path: '/',
-31             secure: false
-32         };
-33
+        Cookies._maxExpireDate = new Date('Fri, 31 Dec 9999 23:59:59 UTC');
 
-34         Cookies.get = function (key) {
-35             if (Cookies._cachedDocumentCookie !== Cookies._document.cookie) {
-36                 Cookies._renewCache();
-37             }
-38
-39             var value = Cookies._cache[Cookies._cacheKeyPrefix + key];
-40
+        Cookies.defaults = {
+            path: '/',
+            secure: false
+        };
 
-41             return value === undefined ? undefined : decodeURIComponent(value);
-42         };
-43
+        Cookies.get = function (key) {
+            if (Cookies._cachedDocumentCookie !== Cookies._document.cookie) {
+                Cookies._renewCache();
+            }
 
-44         Cookies.set = function (key, value, options) {
-45             options = Cookies._getExtendedOptions(options);
-46             options.expires = Cookies._getExpiresDate(value === undefined ? -1 : options.expires);
-47
+            var value = Cookies._cache[Cookies._cacheKeyPrefix + key];
 
-48             Cookies._document.cookie = Cookies._generateCookieString(key, value, options);
-49
+            return value === undefined ? undefined : decodeURIComponent(value);
+        };
 
-50             return Cookies;
-51         };
-52
+        Cookies.set = function (key, value, options) {
+            options = Cookies._getExtendedOptions(options);
+            options.expires = Cookies._getExpiresDate(value === undefined ? -1 : options.expires);
 
-53         Cookies.expire = function (key, options) {
-54             return Cookies.set(key, undefined, options);
-55         };
-56
+            Cookies._document.cookie = Cookies._generateCookieString(key, value, options);
 
-57         Cookies._getExtendedOptions = function (options) {
-58             return {
-59                 path: options && options.path || Cookies.defaults.path,
-60                 domain: options && options.domain || Cookies.defaults.domain,
-61                 expires: options && options.expires || Cookies.defaults.expires,
-62                 secure: options && options.secure !== undefined ?  options.secure : Cookies.defaults.secure
-63             };
-64         };
-65
+            return Cookies;
+        };
 
-66         Cookies._isValidDate = function (date) {
-67             return Object.prototype.toString.call(date) === '[object Date]' && !isNaN(date.getTime());
-68         };
-69
+        Cookies.expire = function (key, options) {
+            return Cookies.set(key, undefined, options);
+        };
 
-70         Cookies._getExpiresDate = function (expires, now) {
-71             now = now || new Date();
-72
+        Cookies._getExtendedOptions = function (options) {
+            return {
+                path: options && options.path || Cookies.defaults.path,
+                domain: options && options.domain || Cookies.defaults.domain,
+                expires: options && options.expires || Cookies.defaults.expires,
+                secure: options && options.secure !== undefined ?  options.secure : Cookies.defaults.secure
+            };
+        };
 
-73             if (typeof expires === 'number') {
-74                 expires = expires === Infinity ?
-75                     Cookies._maxExpireDate : new Date(now.getTime() + expires * 1000);
-76             } else if (typeof expires === 'string') {
-77                 expires = new Date(expires);
-78             }
-79
+        Cookies._isValidDate = function (date) {
+            return Object.prototype.toString.call(date) === '[object Date]' && !isNaN(date.getTime());
+        };
 
-80             if (expires && !Cookies._isValidDate(expires)) {
-81                 throw new Error('`expires` parameter cannot be converted to a valid Date instance');
-82             }
-83
+        Cookies._getExpiresDate = function (expires, now) {
+            now = now || new Date();
 
-84             return expires;
-85         };
-86
+            if (typeof expires === 'number') {
+                expires = expires === Infinity ?
+                    Cookies._maxExpireDate : new Date(now.getTime() + expires * 1000);
+            } else if (typeof expires === 'string') {
+                expires = new Date(expires);
+            }
 
-87         Cookies._generateCookieString = function (key, value, options) {
-88             key = key.replace(/[^#$&+\^`|]/g, encodeURIComponent);
-89             key = key.replace(/\(/g, '%28').replace(/\)/g, '%29');
-90             value = (value + '').replace(/[^!#$&-+\--:<-\[\]-~]/g, encodeURIComponent);
-91             options = options || {};
-92
+            if (expires && !Cookies._isValidDate(expires)) {
+                throw new Error('`expires` parameter cannot be converted to a valid Date instance');
+            }
 
-93             var cookieString = key + '=' + value;
-94             cookieString += options.path ? ';path=' + options.path : '';
-95             cookieString += options.domain ? ';domain=' + options.domain : '';
-96             cookieString += options.expires ? ';expires=' + options.expires.toUTCString() : '';
-97             cookieString += options.secure ? ';secure' : '';
-98
+            return expires;
+        };
 
-99             return cookieString;
-100         };
-101
+        Cookies._generateCookieString = function (key, value, options) {
+            key = key.replace(/[^#$&+\^`|]/g, encodeURIComponent);
+            key = key.replace(/\(/g, '%28').replace(/\)/g, '%29');
+            value = (value + '').replace(/[^!#$&-+\--:<-\[\]-~]/g, encodeURIComponent);
+            options = options || {};
 
-102         Cookies._getCacheFromString = function (documentCookie) {
-103             var cookieCache = {};
-104             var cookiesArray = documentCookie ? documentCookie.split('; ') : [];
-105
+            var cookieString = key + '=' + value;
+            cookieString += options.path ? ';path=' + options.path : '';
+            cookieString += options.domain ? ';domain=' + options.domain : '';
+            cookieString += options.expires ? ';expires=' + options.expires.toUTCString() : '';
+            cookieString += options.secure ? ';secure' : '';
 
-106             for (var i = 0; i < cookiesArray.length; i++) {
-107                 var cookieKvp = Cookies._getKeyValuePairFromCookieString(cookiesArray[i]);
-108
+            return cookieString;
+        };
 
-109                 if (cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] === undefined) {
-110                     cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] = cookieKvp.value;
-111                 }
-112             }
-113
+        Cookies._getCacheFromString = function (documentCookie) {
+            var cookieCache = {};
+            var cookiesArray = documentCookie ? documentCookie.split('; ') : [];
 
-114             return cookieCache;
-115         };
-116
+            for (var i = 0; i < cookiesArray.length; i++) {
+                var cookieKvp = Cookies._getKeyValuePairFromCookieString(cookiesArray[i]);
 
-117         Cookies._getKeyValuePairFromCookieString = function (cookieString) {
-118             // "=" is a valid character in a cookie value according to RFC6265, so cannot `split('=')`
-119             var separatorIndex = cookieString.indexOf('=');
-120
+                if (cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] === undefined) {
+                    cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] = cookieKvp.value;
+                }
+            }
 
-121             // IE omits the "=" when the cookie value is an empty string
-122             separatorIndex = separatorIndex < 0 ? cookieString.length : separatorIndex;
-123
+            return cookieCache;
+        };
 
-124             var key = cookieString.substr(0, separatorIndex);
-125             var decodedKey;
-126             try {
-127                 decodedKey = decodeURIComponent(key);
-128             } catch (e) {
-129                 if (console && typeof console.error === 'function') {
-130                     console.error('Could not decode cookie with key "' + key + '"', e);
-131                 }
-132             }
-133
-134             return {
-135                 key: decodedKey,
-136                 value: cookieString.substr(separatorIndex + 1) // Defer decoding value until accessed
-137             };
-138         };
-139
+        Cookies._getKeyValuePairFromCookieString = function (cookieString) {
+            // "=" is a valid character in a cookie value according to RFC6265, so cannot `split('=')`
+            var separatorIndex = cookieString.indexOf('=');
 
-140         Cookies._renewCache = function () {
-141             Cookies._cache = Cookies._getCacheFromString(Cookies._document.cookie);
-142             Cookies._cachedDocumentCookie = Cookies._document.cookie;
-143         };
-144
+            // IE omits the "=" when the cookie value is an empty string
+            separatorIndex = separatorIndex < 0 ? cookieString.length : separatorIndex;
 
-145         Cookies._areEnabled = function () {
-146             var testKey = 'cookies.js';
-147             var areEnabled = Cookies.set(testKey, 1).get(testKey) === '1';
-148             Cookies.expire(testKey);
-149             return areEnabled;
-150         };
-151
+            var key = cookieString.substr(0, separatorIndex);
+            var decodedKey;
+            try {
+                decodedKey = decodeURIComponent(key);
+            } catch (e) {
+                if (console && typeof console.error === 'function') {
+                    console.error('Could not decode cookie with key "' + key + '"', e);
+                }
+            }
 
-152         Cookies.enabled = Cookies._areEnabled();
-153
+            return {
+                key: decodedKey,
+                value: cookieString.substr(separatorIndex + 1) // Defer decoding value until accessed
+            };
+        };
 
-154         return Cookies;
-155     };
-156     var cookiesExport = (global && typeof global.document === 'object') ? factory(global) : factory;
-157
+        Cookies._renewCache = function () {
+            Cookies._cache = Cookies._getCacheFromString(Cookies._document.cookie);
+            Cookies._cachedDocumentCookie = Cookies._document.cookie;
+        };
 
-158     // AMD support
-159     if (typeof define === 'function' && define.amd) {
-160         define(function () { return cookiesExport; });
-161     // CommonJS/Node.js support
-162     } else if (typeof exports === 'object') {
-163         // Support Node.js specific `module.exports` (which can be a function)
-164         if (typeof module === 'object' && typeof module.exports === 'object') {
-165             exports = module.exports = cookiesExport;
-166         }
-167         // But always support CommonJS module 1.1.1 spec (`exports` cannot be a function)
-168         exports.Cookies = cookiesExport;
-169     } else {
-170         global.Cookies = cookiesExport;
-171     }
-172 })(typeof window === 'undefined' ? this : window);
+        Cookies._areEnabled = function () {
+            var testKey = 'cookies.js';
+            var areEnabled = Cookies.set(testKey, 1).get(testKey) === '1';
+            Cookies.expire(testKey);
+            return areEnabled;
+        };
+
+        Cookies.enabled = Cookies._areEnabled();
+
+        return Cookies;
+    };
+    var cookiesExport = (global && typeof global.document === 'object') ? factory(global) : factory;
+
+    // AMD support
+    if (typeof define === 'function' && define.amd) {
+        define(function () { return cookiesExport; });
+    // CommonJS/Node.js support
+    } else if (typeof exports === 'object') {
+        // Support Node.js specific `module.exports` (which can be a function)
+        if (typeof module === 'object' && typeof module.exports === 'object') {
+            exports = module.exports = cookiesExport;
+        }
+        // But always support CommonJS module 1.1.1 spec (`exports` cannot be a function)
+        exports.Cookies = cookiesExport;
+    } else {
+        global.Cookies = cookiesExport;
+    }
+})(typeof window === 'undefined' ? this : window);
