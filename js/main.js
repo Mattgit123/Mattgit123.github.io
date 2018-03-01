@@ -11,16 +11,21 @@ if (Cookies.get('firstName')){
 }
 // Update the DOM to display the value of our firstName cookie
 
-document.getElementById('welcome').innerText = 'welcome back'+ Cookies.get('firstName')
-document.getElementById('welcome').value = Cookies.get('firstName');
+// document.getElementById('welcome').innerText = 'welcome back'+ Cookies.get('firstName')
+// document.getElementById('welcome').value = Cookies.get('firstName');
 
 //Set a cookie with their name in it.
 Cookies.set('firstName','Matt');
+
+var theValue = document.getElementById('button').innerText;
 // on click of #button
 document.getElementById('button').addEventListener('click', function(){
 
 // To set the value of a box when the submit button is clicked on.
-document.getElementById('test').value = "$250";
+document.getElementById('test').value = theValue;
+
+
+
 
 
 
