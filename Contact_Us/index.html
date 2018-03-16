@@ -1,0 +1,149 @@
+<!--
+Name: Matt Tounkara
+Date: 03/06/2018
+Description: This is my final project for Web Development 100 @ NYCDA in Philadelphia.
+             the aim of this project is to create an e-commerce shoe store website.
+             A website where you can shop for the finest and most elegant shoes you
+             could ever come across. A one stop shopping place for shoes. This is
+             the index.html for the Contact Us page. It is to allow the shoppers to
+             reach out for further asssistance.
+  -->
+
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale= 1">
+      <title>Contact Us</title>
+      <!-- <link rel="stylesheet" href="css/reset.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="css/main.css">
+
+      <script src ="https://code.jquery.com/jquery-3.2.1.js"
+      integrity = "sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+      crossorigin = "anonymous"></script>
+
+      <script src="js/main.js" charset="utf-8"></script>
+    </head>
+    <body>
+
+      <header class="theHeader">
+
+      </header>
+
+
+  <form class="toSearch" action="https://www.footlocker.com/" method="Get">
+      <input style="padding: 16px;
+      background-color: white;  border-radius: 0px;" type="text" name="search" placeholder="Browse our site !">
+      <button style="padding: 16px; background-color: white; border-radius: 0px;" type="submit" name="button">Search</button>
+  </form>
+
+<h1 id="theMessage"><u>Your One Stop Place For The Finest And Most Elegant Shoes!!! </u></h1>
+
+  <!----------------------------------------------------------------------->
+  <!--    Made by Erik Terwan    -->
+  <!--   24th of November 2015   -->
+  <!--    All rights reserved    -->
+  <nav role="navigation">
+    <div id="menuToggle">
+      <!--
+      A fake / hidden checkbox is used as click reciever,
+      so you can use the :checked selector on it.
+      -->
+      <input type="checkbox" />
+
+      <!--
+      Some spans to act as a hamburger.
+
+      They are acting like a real hamburger,
+      not that McDonalds stuff.
+      -->
+      <span></span>
+      <span></span>
+      <span></span>
+
+      <!--
+      Too bad the menu has to be inside of the button
+      but hey, it's pure CSS magic.
+      -->
+      <ul id="menu">
+        <a href="../index.html"><li>Home</li></a>
+        <a href="../About_Us/index.html"><li>About Us</li></a>
+        <a href="../Contact_Us/index.html"><li>Contact Us</li></a>
+        <a href="../Products/index.html"><li>Products</li></a>
+        <a href="../Videos/index.html"><li>Videos</li></a>
+      </ul>
+    </div>
+    </nav>
+
+    <br><br><br><br><br>
+
+  <!------------------------------------------------------------------------->
+    <div class="container">
+
+  <!--First row  -->
+    <div class="row" style="background-color: white;">
+     <div class="col-md-12">
+      <form class="theForm" action=" " method="post" onsubmit="return validateForm()">
+
+        <u><p id="theParagraph">Our Contact Info: </p></u>
+        <p> <b><u>Address:</u> </b>1601 Cherry Street, Suite 100</p>
+        <p> Philadelphia,PA 19102</p>
+        <p> <b><u>Phone#:</u></b> 484-632-4233</p>
+        <p> <b><u>Email:</u></b>mtounkara90@gmail.com</p><br><br>
+
+
+
+        <label for="theFirstName">First Name:</label>
+        <input type="text" name="firstName" placeholder="Your First Name" required>
+
+        <label for="theLastName">Last Name:<input type="text"
+         name="lastName" placeholder="Your Last Name" required></label><br><br>
+
+
+
+
+        <label for="theEmail">Email:<input type="text"
+          name="emailAddress" placeholder ="Your Email Address" required>
+        </label><br><br>
+
+        <label for="thePhoneNumber">Phone:<input type="text"
+           name="phoneNumber" placeholder="Your Phone Number" required>
+        </label><br><br>
+
+        <label for="bestTimeToCall">BTTC:<input type="text"
+            name="BTTC" placeholder="Best Time To call" required>
+        </label><br><br>
+
+        <label for="Message">Message:
+         <textarea name="theMessage" placeholder="Type your message"
+         rows="5" cols="50">
+         </textarea>
+         </label><br>
+
+         <button type="submit" name="toSubmit" value="Submit">Submit</button>
+
+
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+  <!---------------------------------------------------------------------->
+
+    <footer class="theFooter">
+
+    </footer>
+
+    </body>
+  </html>
